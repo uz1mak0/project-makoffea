@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/makoffea
+    username: root
+    password: 12y@n13@rc3b@l
+  jpa:
+    hibernate:
+      ddl-auto: update
