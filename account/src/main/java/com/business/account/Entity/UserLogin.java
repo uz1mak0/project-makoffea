@@ -16,7 +16,7 @@ public class UserLogin {
 
     @Column(name = "UserName")
     @NotBlank(message = "Name field cannot be blank!")
-    @Size(min = 4, max = 50, message = "Name must be in between 2 and 50 char")
+    @Size(min = 4, max = 50, message = "Name must be in between 4 and 50 char")
     private String userName;
 
     @Column(name = "Password")

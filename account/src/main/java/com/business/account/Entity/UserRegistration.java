@@ -1,6 +1,9 @@
 package com.business.account.Entity;
 
+import com.business.account.ExceptionHandler.ValidPassword;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 
 @Entity
@@ -13,28 +16,44 @@ public class UserRegistration {
     private long regId;
 
     @Column(name = "Name")
-    private String Name;
+    @NotBlank(message = "Name field cannot be blank")
+    @Size(min = 4, max = 50, message = "Name must be in between 4 and 50 character")
+    private String name;
+
+    @Column(name = "userName")
+    @NotBlank(message = "Username field cannot be blank")
+    private String userName;
 
     @Column(name = "Address")
-    private String Address;
+    @NotBlank(message = "Address field cannot be blank")
+    private String address;
 
     @Column(name = "Email")
-    private String Email;
+    @NotBlank(message = "Email field cannot be blank")
+    private String email;
 
     @Column(name = "ContactNumber")
-    private int ContactNumber;
+    @NotBlank(message = "Contact field cannot be blank")
+    private int contactNumber;
+
+    @Column(name = "Password")
+    @NotBlank(message = "Password field cannot be blank")
+    @ValidPassword(message = "Password not valid!")
+    private String password;
+
 
     public UserRegistration() {}
 
 
-    public UserRegistration(long regId, String name, String address, String email, int contactNumber) {
+    public UserRegistration(long regId, String name, String userName, String address, String email, int contactNumber, String password) {
         this.regId = regId;
-        Name = name;
-        Address = address;
-        Email = email;
-        ContactNumber = contactNumber;
+        this.name = name;
+        this.userName = userName;
+        this.address = address;
+        this.email = email;
+        this.contactNumber = contactNumber;
+        this.password = password;
     }
-
 
     public long getRegId() {
         return regId;
@@ -45,34 +64,50 @@ public class UserRegistration {
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getAddress() {
-        return Address;
+        return address;
     }
 
     public void setAddress(String address) {
-        Address = address;
+        this.address = address;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
 
     public int getContactNumber() {
-        return ContactNumber;
+        return contactNumber;
     }
 
     public void setContactNumber(int contactNumber) {
-        ContactNumber = contactNumber;
+        this.contactNumber = contactNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
