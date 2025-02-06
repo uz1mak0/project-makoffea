@@ -7,5 +7,5 @@ public interface OrderService {
 
     Orders saveOrders(Orders order);
     Orders getOrdersById(int orderId);
-    int getTotalPrices(int orderId);
+    int getTotalPrice(int orderId);
 }

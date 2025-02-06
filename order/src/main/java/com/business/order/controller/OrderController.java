@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/Order")
 public class OrderController {
 
     @Autowired
@@ -23,7 +23,7 @@ public class OrderController {
     @GetMapping("/Orders/{orderId}")
     public ResponseEntity<Orders> getOrdersById (@PathVariable (value = "orderId") int orderId) {
         Orders getOrders = orderService.getOrdersById(orderId);
-        orderService.getTotalPrices(orderId);
+        orderService.getTotalPrice(orderId);
         return ResponseEntity.status(HttpStatus.OK).body(getOrders);
     }
 }
