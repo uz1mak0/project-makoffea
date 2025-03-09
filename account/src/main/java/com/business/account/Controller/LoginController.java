@@ -16,7 +16,7 @@ public class LoginController {
     @Autowired
     private UserLoginService userLoginService;
 
-    @PostMapping("/new")
+    @PostMapping("/signin")
     public ResponseEntity<UserLogin> saveUsersLogin(@Valid @RequestBody UserLogin userLogin) {
         UserLogin saveAllUsers = userLoginService.save(userLogin);
         return new ResponseEntity<>(saveAllUsers, HttpStatus.CREATED);
