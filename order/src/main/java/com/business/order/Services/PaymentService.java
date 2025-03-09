@@ -1,11 +1,17 @@
 package com.business.order.Services;
 
+import com.business.order.Entity.Orders;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
+import com.paypal.base.rest.PayPalRESTException;
+import com.paypal.http.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.paypal.core.PaypalHttpClient;
 
+import com.paypal.core.PayPalHttpClient;
+import com.paypal.orders.Order;
+import com.paypal.orders.OrdersGetRequest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,12 +21,24 @@ import java.util.List;
 @Service
 public class PaymentService {
 
+    @Value("${paypal.client.id}")
+    private String clientId;
+
+    @Value("${paypal.client.secret}")
+    private String clientSecret;
+
+    @Value("${paypal.mode}")
+    private String mode;
+
+    @Value("${paypal.access.token}")
+    private String accessToken;
+
     @Autowired
     private APIContext apiContext;
 
-    private final PaypalHttpClient paypalHttpClient;
+    private final PayPalHttpClient paypalHttpClient;
 
-    public PaymentService(PaypalHttpClient paypalHttpClient){
+    public PaymentService(PayPalHttpClient paypalHttpClient){
         this.paypalHttpClient = paypalHttpClient;
     }
 
@@ -62,7 +80,7 @@ public class PaymentService {
 
     //.. other methods (execute payment.., cancel payment) ...
 
-    //execute payment
+    //Execute payment
     public Payment executePayment(String paymentId, String payerId) throws Exception {
         Payment payment = new Payment();
         payment.setId(paymentId);
@@ -73,25 +91,28 @@ public class PaymentService {
         return payment.execute(apiContext, paymentExecution);
     }
 
+    private APIContext getApiContext() {
+        return new APIContext(clientId, clientSecret, mode);
+    }
 
-    //cancel payment
+
+    //Cancel payment
     public void cancelPendingOrder(String orderId) throws Exception {
         try {
             Order order = getOrder(orderId);
 
             if (order.status().equals("CREATED")) { // Only cancel if order is in CREATED state
-                OrderPatchRequest request = new OrderPatchRequest(orderId);
+                Orders request = new Orders();
                 List<Patch> patches = new ArrayList<>();
 
                 Patch patch = new Patch()
-                        .op("replace")
-                        .path("/status")
-                        .value("CANCELLED"); // Or VOIDED depending on PayPal API version
+                        .setOp("replace")
+                        .setPath("/status")
+                        .setValue("CANCELLED"); // Or VOIDED depending on PayPal API version
                 patches.add(patch);
 
                 request.requestBody(patches);
 
-                paypalClient.execute(request);
 
                 // Optionally: Log success, update your database, etc.
                 System.out.println("Order " + orderId + " cancelled successfully.");
@@ -100,33 +121,52 @@ public class PaymentService {
                 throw new IllegalStateException("Order " + orderId + " cannot be cancelled. Status: " + order.status());
             }
         } catch (Exception e) {
-           //Handle exceptions appropriately (log, throw custom exception etc..)
+           //Handle exceptions appropriately (log, throw custom exception etc.)
             System.err.println("Error cancelling order: " + e.getMessage());
             throw e;
         }
     }
 
     //Refund Payment
-    public void refundCapturedPayment(String paymentId, String reason) throws Exception {
-        try {
-            // ... (Code to create a Refund request using PayPal Java SDK) ...
-            // You'll need to look up the specific Refund API call and construct
-            // the request object with the paymentId and refund amount/reason.
-            // Example (adapt to your needs):
-            RefundRequest refundRequest = new RefundRequest();
-            // ... set amount, reason, etc.
-            // Execute the refund request
-            // paypalClient.execute(refundRequest);
+    public Refund createRefund(String transactionId, String amount, String currency, String reason) throws PayPalRESTException {
+        APIContext apiContext = new APIContext(accessToken);
 
-            System.out.println("Refund for payment" + paymentId + "initiated.");
-        } catch (Exception e) {
-            System.err.println("Error initiating refund: " + e.getMessage());
-            throw e;
+        Refund refund = new Refund();
+
+        Amount refundAmount = new Amount();
+        refundAmount.setCurrency(currency);
+        refundAmount.setTotal(amount);
+        refund.setAmount(refundAmount);
+
+        if (reason != null && !reason.isEmpty()) {
+            refund.setDescription(reason);
         }
+
+        Sale sale = new Sale();
+        sale.setId(transactionId);
+
+        return sale.refund(apiContext, refund);
     }
+//    public void refundCapturedPayment(String paymentId, String reason) throws Exception {
+//        try {
+//            // ... (Code to create a Refund request using PayPal Java SDK) ...
+//            // You'll need to look up the specific Refund API call and construct
+//            // the request object with the paymentId and refund amount/reason.
+//            // Example (adapt to your needs):
+//            RefundRequest refundRequest = new RefundRequest();
+//            // ... set amount, reason, etc.
+//            // Execute the refund request
+//            // paypalClient.execute(refundRequest);
+//
+//            System.out.println("Refund for payment" + paymentId + "initiated.");
+//        } catch (Exception e) {
+//            System.err.println("Error initiating refund: " + e.getMessage());
+//            throw e;
+//        }
+//    }
 
     private Order getOrder(String orderId) throws Exception {
         OrdersGetRequest request = new OrdersGetRequest(orderId);
-        return paypalClient.execute(request).result();
+        return paypalHttpClient.execute(request).result();
     }
 }

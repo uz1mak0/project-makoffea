@@ -17,3 +17,14 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+
+
+#Paypal gateway configuration
+paypal:
+  client:
+    id: "AVEUTTPuWZ8dOT1yfDlOBeOJbFVOXzm6xaZu2drRu-JMntpmcMA7Li6FnglgxHF3zidhuaWc6TBRZyTf"
+    secret: "EIjeJdz5PauRq6TJrZ8JvYqjM6G6MydmU55ypXxl_-YR1xvH8QttcJW5G_OQWfNktOQ6_5-DNgkkFJ57"
+  mode: sandbox # or live
+  access:
+    token: "A21AAKQT0fKijrfgTrbqJU7FXa9hT7wWaMO7dGJiMyKi1JKPls0iy6HnGtvH_tKXNnN3dc9xyx59TkjuqTjJEN_8ul5b77VDA"

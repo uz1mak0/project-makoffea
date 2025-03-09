@@ -1,5 +1,9 @@
 package com.business.order.Entity;
 
+import java.util.List;
+
+import com.paypal.api.payments.Patch;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -23,8 +27,10 @@ public class Orders {
     @Column(name = "totalPrice")
     private double totalPrice;
 
-    public Orders() {
+    public Orders(){
+        super();
     }
+
 
     public Orders(int orderId, String variation, int quantity, int productPrice, double totalPrice) {
         this.orderId = orderId;
@@ -74,4 +80,13 @@ public class Orders {
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
+
+	public void requestBody(List<Patch> patches) {
+		// TODO Auto-generated method stub
+    }
+
+//	public void requestBody(List<Patch> patches) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 }
