@@ -4,12 +4,16 @@ import java.util.List;
 
 import com.paypal.api.payments.Patch;
 
+import com.paypal.http.HttpRequest;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "orders")
-public class Orders {
+public class Orders extends HttpRequest {
 
+    private static final String path = null;
+    private static final String verb = null;
+    private static final Class responseClass = null;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orderId")
@@ -27,18 +31,21 @@ public class Orders {
     @Column(name = "totalPrice")
     private double totalPrice;
 
-    public Orders(){
-        super();
-    }
+
+public Orders() {
+    super(path, verb, responseClass);
+}
 
 
     public Orders(int orderId, String variation, int quantity, int productPrice, double totalPrice) {
+        this();
         this.orderId = orderId;
         this.variation = variation;
         this.quantity = quantity;
         this.productPrice = productPrice;
         this.totalPrice = totalPrice;
     }
+
 
 
     public int getOrderId() {
@@ -84,9 +91,4 @@ public class Orders {
 	public void requestBody(List<Patch> patches) {
 		// TODO Auto-generated method stub
     }
-
-//	public void requestBody(List<Patch> patches) {
-//		// TODO Auto-generated method stub
-//		
-//	}
 }

@@ -114,6 +114,8 @@ public class PaymentService {
                 request.requestBody(patches);
 
 
+                paypalHttpClient.execute(request);
+
                 // Optionally: Log success, update your database, etc.
                 System.out.println("Order " + orderId + " cancelled successfully.");
 
