@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-	
+
 	
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
@@ -27,16 +27,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
-                        .loginPage("/") // custom login page URL
-                        .loginProcessingUrl("/") // URL where the login form submits (usually /login)
-                        .defaultSuccessUrl("/") // Redirect after successful login
-                        .permitAll() // Important: Allow access to the login page itself!
+                        .loginPage("/login") // custom login page URL
+                        .loginProcessingUrl("/login") // URL where the login form submits (usually /login)
+                        .defaultSuccessUrl("/loggedIn") // Redirect after successful login
+                        .permitAll() // Allow access to the login page itself!
                 )
                 .logout(LogoutConfigurer::permitAll); // Allow everyone to logout
 
